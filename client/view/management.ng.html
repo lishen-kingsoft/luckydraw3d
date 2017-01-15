@@ -1,0 +1,120 @@
+<div class="container-fluid">
+  <audio id="bgm" controls="controls" loop="loop">
+    <source src="music/bgm.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="donem" controls="controls">
+    <source src="music/done.mp3" type="audio/mpeg">
+  </audio>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="nav navbar-nav">
+      <a class="nav-item nav-link {{vm.tab=='config'?'active':''}}" href="#" ng-click="vm.tab='config'">抽奖配置<span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link {{vm.tab=='list'?'active':''}}" href="#" ng-click="vm.tab='list'">中奖名单</a>
+    </div>
+  </nav>
+</div>
+
+<section ng-if="vm.tab=='config'">
+  <div class="container-fluid oper-container">
+    <div class="row">
+      <div class="col-sm-1"><label class="col-form-label col-form-label-sm">添加:</label></div>
+      <div class="col-sm-11">
+        <form class="form-inline">
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">奖品级别</label>
+            <input type="text" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.class">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">级别序列</label>
+            <input type="number" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.classSeq">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">奖品轮数</label>
+            <input type="text" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.round">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">轮数序列</label>
+            <input type="number" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.roundSeq">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">中奖人数</label>
+            <input type="number" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.ppl">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label col-form-label-sm">中奖范围</label>
+            <input type="text" class="form-control form-control-sm config-add-input" ng-model="vm.addedConfig.scope">
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" ng-click="vm.addConfig()">添加</button>
+          <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.resetAddedConfig()">清空</button>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1"><label class="col-form-label col-form-label-sm">操作:</label></div>
+      <div class="col-sm-11">
+        <button type="button" class="btn btn-outline-primary btn-sm" ng-click="vm.start()" ng-if="vm.currentDraw.status == '未开始'">开始</button>
+        <button type="button" class="btn btn-outline-primary btn-sm" ng-click="vm.stop()" ng-if="vm.currentDraw.status == '进行中'">停止</button>
+        <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.resetAll()">重置</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1"><label class="col-form-label col-form-label-sm">页面:</label></div>
+      <div class="col-sm-11">
+        <label class="col-form-label col-form-label-sm">{{vm.dbStatus[0].page == 'ready' ? '开始页' : (vm.dbStatus[0].page == 'result' ? '结果页' : '抽奖中页')}}</label>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>奖品级别</th>
+          <th>级别序列</th>
+          <th>奖品轮数</th>
+          <th>轮数序列</th>
+          <th>中奖人数</th>
+          <th>中奖范围</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="config in vm.enhancedConfigs" class="{{config.isCurrent ? 'table-success' : (config.status == '已完成' ? 'table-active' : '')}}">
+          <td rowspan="{{config.classLength}}" ng-if="config.firstOfClass">{{config.class}}</td>
+          <td rowspan="{{config.classLength}}" ng-if="config.firstOfClass">{{config.classSeq}}</td>
+          <td>{{config.round}}</td>
+          <td>{{config.roundSeq}}</td>
+          <td>{{config.ppl}}</td>
+          <td>{{config.scope}}</td>
+          <td>{{config.status}}</td>
+          <td><button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.deleteConfig(config)">删除</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <section ng-if="vm.tab=='list'">
+    <div class="container-fluid oper-container">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="list-group">
+            <a href="#" class="list-group-item {{vm.selectedClass == class ? 'active' : ''}}" ng-repeat="class in vm.getClasses()" ng-click="vm.selectClass(class)">{{class}}</a>
+          </div>
+        </div>
+        <div class="col-sm-10">
+          <div class="card card-block ppl-card">
+            <div ng-repeat="round in vm.getRounds()">
+              <div class="row">
+                <div class="col-sm-12">{{round}}</div>
+              </div>
+              <div class="row">
+                <div class="col-sm-2" ng-repeat="ppl in vm.getPpls(round)">
+                  {{ppl.sn}} {{ppl.name}}
+                  <input type="checkbox" ng-checked="ppl.done" ng-model="ppl.done" ng-change="vm.updateDone(ppl)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
