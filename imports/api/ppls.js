@@ -29,9 +29,9 @@ if (Meteor.isServer) {
       RawPpls.aggregateSync = Meteor.wrapAsync(RawPpls.aggregate);
       var candidates = [];
       if (config.scope == Configs.const.SCOPE_LOCAL) {
-        candidates = RawPpls.aggregateSync([{$match: {laId: '', forLa: true}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
+        candidates = RawPpls.aggregateSync([{$match: {laId: '', forLa: 'true'}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
       } else if(config.scope == Configs.const.SCOPE_GLOBAL) {
-        candidates = RawPpls.aggregateSync([{$match: {gaId: '', forGa: true}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
+        candidates = RawPpls.aggregateSync([{$match: {gaId: '', forGa: 'true'}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
       }
 
       if (candidates.length) {
