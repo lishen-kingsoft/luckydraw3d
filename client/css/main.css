@@ -1,3 +1,18 @@
+@font-face {
+  font-family: WenYue;
+  src: url('fonts/WenYue-XinQingNianTi-NC-W8.otf');
+}
+
+@font-face {
+  font-family: 'Noto Sans Chinese Bold';
+  src: url('fonts/NotoSansCJKsc-Bold.otf');
+}
+
+@font-face {
+  font-family: 'Din Cond Black';
+  src: url('fonts/DINCond-Black.otf');
+}
+
 .luckydraw {
   overflow: auto;
   font-family: 'Microsoft Yahei';
@@ -11,7 +26,7 @@
   right: 0;
   margin: 0;
   background-color: #000000;
-  background-image: url(img/bg.jpg);
+  background-image: url(img/star-bg3.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -20,34 +35,30 @@
 .candidate {
   width: 160px;
   height: 180px;
-  box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
-  border: 1px solid rgba(127,255,255,0.25);
+  box-shadow: 0px 0px 20px rgba(2,223,223,0.5), inset 0px 0px 20px rgba(2,223,223,0.5);
+  border: 1px solid rgba(2,223,223,1);
   text-align: center;
   cursor: default;
-}
-
-.candidate:hover {
-  box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
-  border: 1px solid rgba(127,255,255,0.75);
+  font-family: 'Noto Sans Chinese Bold';
 }
 
 .candidate .sn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 22px;
-  color: rgba(127,255,255,0.75);
+  top: 15px;
+  right: 15px;
+  font-size: 26px;
+  color: rgba(2,223,223,1);
+  font-family: 'Din Cond Black';
 }
 
 .candidate .name {
   position: absolute;
-  top: 70px;
+  top: 65px;
   left: 0px;
   right: 0px;
-  font-size: 32px;
-  font-weight: bold;
-  color: rgba(255,255,255,0.75);
-  text-shadow: 0 0 10px rgba(0,255,255,0.95);
+  font-size: 36px;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0px 0px 20px rgba(2,223,223,0.5);
   width: 100%;
   height: 100%;
   word-wrap: break-word;
@@ -64,20 +75,46 @@
   color: rgba(127,255,255,0.75);
 }
 
+.home {
+  font-family: WenYue;
+  color: #02dfdf;
+  text-align: center;
+}
+
+.home .t1 {
+  font-size: 170px;
+}
+
+.home .t2 {
+  font-size: 120px;
+}
+
+.home .noto {
+  font-family: 'Noto Sans Chinese Bold';
+  opacity: 0;
+}
+
+.home .din {
+  font-family: 'Din Cond Black';
+  opacity: 0;
+}
+
 .title {
-  color: rgba(255,255,255,0.8);
-  text-shadow: 0 0 50px rgba(0,255,255,0.95);
+  font-family: WenYue;
+  color: #02dfdf;
+  top: 600px;
+  white-space: nowrap;
 }
 
 .title .clazz {
   display: inline-block;
-  font-size: 42px;
+  font-size: 320px;
 }
 
 .title .round {
-  margin-left: 20px;
+  margin-left: 40px;
   display: inline-block;
-  font-size: 24px;
+  font-size: 160px;
 }
 
 .form-inline .form-control.form-control-sm.config-add-input {

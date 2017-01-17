@@ -41,7 +41,41 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.renderer.domElement.style.position = 'absolute';
     document.getElementById( 'container' ).appendChild( vm.renderer.domElement );
     
+    vm.initHome();
     vm.animate();
+  };
+
+  vm.initHome = function() {
+    var home = document.createElement( 'div' );
+    home.className = 'home';
+    var t1 = document.createElement( 'div' );
+    t1.className = 't1';
+    t1.textContent = '2017西山居年夜饭';
+    home.appendChild( t1 );
+    var t2 = document.createElement( 'div' );
+    t2.className = 't2';
+    t2.textContent = '大乐透';
+    home.appendChild( t2 );
+    var noto = document.createElement( 'div' );
+    noto.className = 'noto';
+    noto.textContent = 'noto';
+    home.appendChild( noto );
+    var din = document.createElement( 'div' );
+    din.className = 'din';
+    din.textContent = 'din';
+    home.appendChild( din );
+
+    vm.css3dHome = new THREE.CSS3DObject( home );
+    vm.css3dHome.position.x = 0;
+    vm.css3dHome.position.y = 0;
+    vm.css3dHome.position.z = 1500;
+    
+    var axis = new THREE.Vector3( 1, 0, 0 );
+    var angle = Math.PI / 2;
+
+    vm.scene.add(vm.css3dHome);
+
+    vm.render();
   };
 
   vm.animate = function() {
@@ -68,8 +102,21 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     var promise = new Promise(function(resolve, reject) {
       TWEEN.removeAll();
 
-      if (_.isEmpty(vm.candidates) && !vm.css3dTitle) {
+      if (_.isEmpty(vm.candidates) && !vm.css3dTitle && !vm.css3dHome) {
         resolve();
+      }
+
+      if (vm.css3dHome) {
+        var positionX = -99999;
+        var positionY = vm.css3dHome.position.y;
+        var positionZ = vm.css3dHome.position.z;
+        new TWEEN.Tween( vm.css3dHome.position )
+          .to( { x: positionX, y: positionY, z: positionZ }, 200 )
+          .easing( TWEEN.Easing.Exponential.In )
+          .onComplete(function() {
+            vm.scene.remove(vm.css3dHome);
+          })
+          .start();
       }
       
       if (vm.css3dTitle) {
@@ -79,6 +126,9 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         new TWEEN.Tween( vm.css3dTitle.position )
           .to( { x: positionX, y: positionY, z: positionZ }, 200 )
           .easing( TWEEN.Easing.Exponential.In )
+          .onComplete(function() {
+            vm.scene.remove(vm.css3dTitle);
+          })
           .start();
       }
       if (!_.isEmpty(vm.candidates)) {
@@ -89,6 +139,11 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
           new TWEEN.Tween( candidate.position )
             .to( { x: positionX, y: positionY, z: positionZ }, 200 )
             .easing( TWEEN.Easing.Exponential.In )
+            .onComplete(function() {
+              _.each(vm.candidates, function(item) {
+                vm.scene.remove(item);
+              });
+            })
             .start();
         });
       }
@@ -97,10 +152,6 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         .onUpdate( vm.render )
         .start()
         .onComplete(function() {
-          vm.scene.remove(vm.css3dTitle);
-          _.each(vm.candidates, function(item) {
-            vm.scene.remove(item);
-          });
           resolve();
         });
     });
@@ -116,7 +167,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         var candidateEle = document.createElement( 'div' );
         candidateEle.id = rawCandidate._id;
         candidateEle.className = 'candidate';
-        candidateEle.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+        candidateEle.style.backgroundColor = 'rgba(10,174,235,' + ( Math.random() * 0.2 + 0.1 ) + ')';
 
         var sn = document.createElement( 'div' );
         sn.className = 'sn';
@@ -247,18 +298,19 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.css3dTitle.position.z = -9999;
     vm.scene.add(vm.css3dTitle);
     new TWEEN.Tween( vm.css3dTitle.position )
-        .to( { x: 0, y: 120, z: 2500 }, 500 )
+        .to( { x: 0, y: 120, z: 0 }, 500 )
         .easing( TWEEN.Easing.Linear.None )
         .start();
 
     _.each(vm.candidates, function(candidate, index) {
       var positionX = ( ( index % 10 ) * 200 ) - 900;
       var positionY = ( - ( Math.floor( index / 10 ) * 220 ) ) + 80;
-      var positionZ = 1400;
+      var positionZ = 1300;
       new TWEEN.Tween( candidate.position )
         .to( { x: positionX, y: positionY, z: positionZ }, 500 )
         .easing( TWEEN.Easing.Linear.None )
         .start();
+      document.getElementById(candidate.rawId).style.backgroundColor = 'rgba(10,174,235,0.15)';
     });
     new TWEEN.Tween( {} )
       .to( {}, 500 )
