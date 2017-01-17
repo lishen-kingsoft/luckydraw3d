@@ -5,6 +5,8 @@ import { Meteor } from 'meteor/meteor';
 
 import { Events } from '/imports/api/events';
 
+import { Boid } from '../three/Boid';
+
 import * as THREE from 'three/build/three';
 import * as TWEEN from 'tween.js/src/Tween';
 
@@ -66,37 +68,41 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     var promise = new Promise(function(resolve, reject) {
       TWEEN.removeAll();
 
-      if (_.isEmpty(vm.candidates)) {
+      if (_.isEmpty(vm.candidates) && !vm.css3dTitle) {
         resolve();
-      } else {
-        var positionX = -100000;
+      }
+      
+      if (vm.css3dTitle) {
+        var positionX = -99999;
         var positionY = vm.css3dTitle.position.y;
         var positionZ = vm.css3dTitle.position.z;
         new TWEEN.Tween( vm.css3dTitle.position )
-          .to( { x: positionX, y: positionY, z: positionZ }, 500 )
+          .to( { x: positionX, y: positionY, z: positionZ }, 200 )
           .easing( TWEEN.Easing.Exponential.In )
           .start();
+      }
+      if (!_.isEmpty(vm.candidates)) {
         _.each(vm.candidates, function(candidate) {
-          var positionX = -100000;
+          var positionX = -99999;
           var positionY = candidate.position.y;
           var positionZ = candidate.position.z;
           new TWEEN.Tween( candidate.position )
-            .to( { x: positionX, y: positionY, z: positionZ }, 500 )
+            .to( { x: positionX, y: positionY, z: positionZ }, 200 )
             .easing( TWEEN.Easing.Exponential.In )
             .start();
         });
-        new TWEEN.Tween( {} )
-          .to( {}, 500 )
-          .onUpdate( vm.render )
-          .start()
-          .onComplete(function() {
-            _.each(vm.candidates, function(item) {
-              vm.scene.remove(item);
-              vm.scene.remove(vm.css3dTitle);
-            });
-            resolve();
-          });
       }
+      new TWEEN.Tween( {} )
+        .to( {}, 200 )
+        .onUpdate( vm.render )
+        .start()
+        .onComplete(function() {
+          vm.scene.remove(vm.css3dTitle);
+          _.each(vm.candidates, function(item) {
+            vm.scene.remove(item);
+          });
+          resolve();
+        });
     });
 
     return promise;
@@ -141,11 +147,28 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         vm.candidates.push(css3dCandidate);
       });
 
+      vm.initBoids(rawCandidates.length);
+
       vm.render();
 
       resolve();
     });
     return promise;
+  };
+
+  vm.initBoids = function(count) {
+    vm.boids = [];
+    for (var i = 0; i < count; i++) {
+      boid = vm.boids[i] = new Boid(1, 50, 1, 10);
+      boid.position.x = ( ( i % 7 ) * 400 ) - 1200;
+      boid.position.y = ( - ( Math.floor( i / 7 ) % 5 ) * 400 ) + 800;
+      boid.position.z = ( - ( Math.floor(i / 35) * 500 ) ) + 500;
+      boid.velocity.x = Math.random() * 2 - 1;
+      boid.velocity.y = Math.random() * 2 - 1;
+      boid.velocity.z = Math.random() * 5 - 1;
+      boid.setAvoidWalls( true );
+      boid.setWorldSize( 2500, 1500, 2000 );
+    }
   };
 
   vm.pullcloseCandidates = function(duration) {
@@ -154,7 +177,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
       _.each(vm.candidates, function(candidate) {
         new TWEEN.Tween( candidate.position )
           .to( { x: candidate.position.x, y: candidate.position.y, z: candidate.position.z - 8000 }, Math.random() * duration + duration )
-          .easing( TWEEN.Easing.Circular.Out )
+          .easing( TWEEN.Easing.Linear.None )
           .start();
       });
       new TWEEN.Tween( {} )
@@ -162,7 +185,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         .onUpdate( vm.render )
         .start()
         .onComplete(function() {
-          resolve();
+          $timeout(resolve, 50);
       });
     });
 
@@ -170,42 +193,14 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
   };
 
   vm.wanderCandidates = function() {
-    var getRandom = function(number) {
-        var r = number + ((Math.random() - 0.5) * 5000);
-        if(r < -2000) {
-          r = -2000;
-        } else if(r > 2000) {
-          r = 2000;
-        }
-        return r;
-    }
-
-    var moveFirst = function(duration, cb) {
-      TWEEN.removeAll();
-      _.each(vm.candidates, function(candidate) {
-        var positionX = getRandom(candidate.position.x);
-        var positionY = getRandom(candidate.position.y);
-        var positionZ = getRandom(candidate.position.z);
-        new TWEEN.Tween( candidate.position )
-          .to( { x: positionX, y: positionY, z: positionZ }, duration )
-          .easing( TWEEN.Easing.Exponential.In )
-          .start();
-      });
-      new TWEEN.Tween( {} )
-        .to( {}, duration )
-        .onUpdate( vm.render )
-        .start()
-        .onComplete(cb);
-    }
-
     var moveStep = function(duration) {
       TWEEN.removeAll();
-      _.each(vm.candidates, function(candidate) {
-        var positionX = getRandom(candidate.position.x);
-        var positionY = getRandom(candidate.position.y);
-        var positionZ = getRandom(candidate.position.z);
+      _.each(vm.candidates, function(candidate, index) {
+        var boid = vm.boids[index];
+        boid.run(vm.boids);
+
         new TWEEN.Tween( candidate.position )
-          .to( { x: positionX, y: positionY, z: positionZ }, duration )
+          .to( { x: boid.position.x, y: boid.position.y, z: boid.position.z }, duration )
           .easing( TWEEN.Easing.Linear.None )
           .start();
       });
@@ -215,13 +210,10 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         .start();
     }
 
-    moveFirst(1000, function() {
-      var duration = 1000;
-      moveStep(duration);
+      var duration = 20;
       vm.wanderInterval = $interval(function() {
         moveStep(duration);
       }, duration);
-    });
   };
 
   vm.removeCandidates = function() {
