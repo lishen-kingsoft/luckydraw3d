@@ -79,24 +79,32 @@
   font-family: WenYue;
   color: #02dfdf;
   text-align: center;
+  height: 800px;
 }
 
 .home .t1 {
   font-size: 170px;
+  margin-top: 150px;
 }
 
 .home .t2 {
   font-size: 120px;
 }
 
-.home .noto {
+.home .poweredby {
+  position: absolute;
+  right: 20px;
+  bottom: 60px;
+  font-size: 20px;
   font-family: 'Noto Sans Chinese Bold';
-  opacity: 0;
 }
 
-.home .din {
+.home .github {
+  position: absolute;
+  right: 20px;
+  bottom: 40px;
+  font-size: 18px;
   font-family: 'Din Cond Black';
-  opacity: 0;
 }
 
 .title {

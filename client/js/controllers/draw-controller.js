@@ -11,7 +11,7 @@ import * as THREE from 'three/build/three';
 import * as TWEEN from 'tween.js/src/Tween';
 
 export default function($scope, $meteor, $reactive, $timeout, $interval) {
-  
+
   $reactive(this).attach($scope);
 
   var vm = this;
@@ -19,7 +19,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
   Meteor.autorun(function() {
     var initTs = new Date().getTime();
     Events.find().observe({
-      added: function(event){ 
+      added: function(event){
         if(!event.ts || (initTs > event.ts)) {
           return;
         }
@@ -40,7 +40,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.renderer.setSize( window.innerWidth, window.innerHeight );
     vm.renderer.domElement.style.position = 'absolute';
     document.getElementById( 'container' ).appendChild( vm.renderer.domElement );
-    
+
     vm.initHome();
     vm.animate();
   };
@@ -54,22 +54,22 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     home.appendChild( t1 );
     var t2 = document.createElement( 'div' );
     t2.className = 't2';
-    t2.textContent = '大乐透';
+    t2.textContent = '幸运大抽奖';
     home.appendChild( t2 );
-    var noto = document.createElement( 'div' );
-    noto.className = 'noto';
-    noto.textContent = 'noto';
-    home.appendChild( noto );
-    var din = document.createElement( 'div' );
-    din.className = 'din';
-    din.textContent = 'din';
-    home.appendChild( din );
+    var poweredby = document.createElement( 'div' );
+    poweredby.className = 'poweredby';
+    poweredby.textContent = 'Powered By 西山居技术中心';
+    home.appendChild( poweredby );
+    var github = document.createElement( 'div' );
+    github.className = 'github';
+    github.textContent = 'https://github.com/lishen-kingsoft/luckydraw3d';
+    home.appendChild( github );
 
     vm.css3dHome = new THREE.CSS3DObject( home );
     vm.css3dHome.position.x = 0;
     vm.css3dHome.position.y = 0;
     vm.css3dHome.position.z = 1500;
-    
+
     var axis = new THREE.Vector3( 1, 0, 0 );
     var angle = Math.PI / 2;
 
@@ -118,7 +118,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
           })
           .start();
       }
-      
+
       if (vm.css3dTitle) {
         var positionX = -99999;
         var positionY = vm.css3dTitle.position.y;
