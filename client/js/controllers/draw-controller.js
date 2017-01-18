@@ -91,6 +91,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     }).then(function() {
       vm.wanderCandidates();
     });
+    $('#bgm')[0].currentTime = 0;
     $('#bgm')[0].play();
   };
 
@@ -98,7 +99,9 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.removeCandidates();
     vm.sortCandidates(rawDraw);
     $('#bgm')[0].pause();
-    $('#donem')[0].play();
+    $timeout(function() {
+      $('#done')[0].play();
+    }, 100);
   };
 
   vm.cleanScreen = function() {

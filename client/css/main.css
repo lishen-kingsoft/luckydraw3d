@@ -46,7 +46,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 26px;
+  font-size: 36px;
   color: rgba(2,223,223,1);
   font-family: 'Din Cond Black';
 }
@@ -71,7 +71,7 @@
   bottom: 20px;
   left: 0px;
   right: 0px;
-  font-size: 16px;
+  font-size: 20px;
   color: rgba(127,255,255,0.75);
 }
 
