@@ -2,6 +2,7 @@
 'ngInject';
 
 import { Meteor } from 'meteor/meteor';
+import { HTTP } from 'meteor/http';
 
 import { Events } from '/imports/api/events';
 
@@ -98,11 +99,34 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
   vm.stopDraw = function(rawDraw) {
     vm.removeCandidates();
     vm.sortCandidates(rawDraw);
+    vm.noticeResults(rawDraw);
     $('#bgm')[0].pause();
     $timeout(function() {
       $('#done')[0].play();
     }, 100);
   };
+
+  vm.noticeResults = function(rawDraw) {
+    var classes = ['三等奖', '二等奖', '一等奖', '特等奖', '神秘大奖'];
+    // _.each(vm.candidates, function(candidate) {
+    //   if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
+    //     HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
+    //       userAccount: candidate.rawRtx,
+    //       userName: candidate.rawName,
+    //       roundName: rawDraw.class
+    //     }}, function(result) {
+    //       console.log(result);
+    //     });
+    //   }
+    // });
+
+    HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
+        userAccount: 'zhoulei1',
+        userName: '周磊',
+        roundName: rawDraw.class
+      }}, function(result) {
+    });
+  }
 
   vm.cleanScreen = function() {
     var promise = new Promise(function(resolve, reject) {
@@ -198,7 +222,10 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         css3dCandidate.position.y = ( - ( Math.floor( i / 7 ) % 5 ) * 400 ) + 800;
         css3dCandidate.position.z = ( - ( Math.floor(i / 35) * 500 ) ) + 8500;
         css3dCandidate.rawId = rawCandidate._id;
+        css3dCandidate.rawRtx = rawCandidate.rtx;
+        css3dCandidate.rawName = rawCandidate.name;
         css3dCandidate.lucky = (rawCandidate.laId == rawDraw._id || rawCandidate.gaId == rawDraw._id);
+
         vm.scene.add( css3dCandidate );
 
         vm.candidates.push(css3dCandidate);
