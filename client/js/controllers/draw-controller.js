@@ -91,11 +91,14 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     }).then(function() {
       vm.wanderCandidates();
     });
+    $('#bgm')[0].play();
   };
 
   vm.stopDraw = function(rawDraw) {
     vm.removeCandidates();
     vm.sortCandidates(rawDraw);
+    $('#bgm')[0].pause();
+    $('#donem')[0].play();
   };
 
   vm.cleanScreen = function() {
@@ -210,7 +213,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
   vm.initBoids = function(count) {
     vm.boids = [];
     for (var i = 0; i < count; i++) {
-      boid = vm.boids[i] = new Boid(1, 50, 1, 10);
+      boid = vm.boids[i] = new Boid(1, 50, 1, 20);
       boid.position.x = ( ( i % 7 ) * 400 ) - 1200;
       boid.position.y = ( - ( Math.floor( i / 7 ) % 5 ) * 400 ) + 800;
       boid.position.z = ( - ( Math.floor(i / 35) * 500 ) ) + 500;
