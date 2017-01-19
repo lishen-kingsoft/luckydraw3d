@@ -43,7 +43,9 @@ export default function($scope, $meteor, $reactive) {
   };
 
   vm.deleteConfig = function(config) {
-    Configs.remove(config._id);
+    if (window.confirm('是否要删除当前信息？')) {
+      Configs.remove(config._id);
+    }
   };
 
   vm.addConfig = function() {

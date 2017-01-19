@@ -108,23 +108,16 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
 
   vm.noticeResults = function(rawDraw) {
     var classes = ['三等奖', '二等奖', '一等奖', '特等奖', '神秘大奖'];
-    // _.each(vm.candidates, function(candidate) {
-    //   if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
-    //     HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
-    //       userAccount: candidate.rawRtx,
-    //       userName: candidate.rawName,
-    //       roundName: rawDraw.class
-    //     }}, function(result) {
-    //       console.log(result);
-    //     });
-    //   }
-    // });
-
-    HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
-        userAccount: 'zhoulei1',
-        userName: '周磊',
-        roundName: rawDraw.class
-      }}, function(result) {
+    _.each(vm.candidates, function(candidate) {
+      if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
+        HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
+          userAccount: candidate.rawRtx,
+          userName: candidate.rawName,
+          roundName: rawDraw.class
+        }}, function(result) {
+          console.log(result);
+        });
+      }
     });
   }
 
