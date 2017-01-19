@@ -35,9 +35,11 @@ export default function($scope, $meteor, $reactive) {
   };
 
   vm.resetAll = function() {
-    Meteor.call('resetAllConfigs');
-    Meteor.call('resetAllPpls');
-    Meteor.call('resetAllEvents');
+    if (window.confirm('是否要重置所有信息？')) {
+      Meteor.call('resetAllConfigs');
+      Meteor.call('resetAllPpls');
+      Meteor.call('resetAllEvents');
+    }
   };
 
   vm.deleteConfig = function(config) {
