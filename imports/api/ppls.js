@@ -29,13 +29,15 @@ if (Meteor.isServer) {
       RawPpls.aggregateSync = Meteor.wrapAsync(RawPpls.aggregate);
       var candidates = [];
       if (config.scope == Configs.const.SCOPE_LOCAL) {
-        candidates = RawPpls.aggregateSync([{$match: {laId: '', forLa: 'true'}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
+        candidates = RawPpls.aggregateSync([{$match: {laId: '', forLa: 'true'}}]);
       } else if(config.scope == Configs.const.SCOPE_GLOBAL) {
-        candidates = RawPpls.aggregateSync([{$match: {gaId: '', forGa: 'true'}}, {$sample: {size: Ppls.const.DRAW_PPL_COUNT}}]);
+        candidates = RawPpls.aggregateSync([{$match: {gaId: '', forGa: 'true'}}]);
       }
 
       if (candidates.length) {
-        var luckyGuys = _.sample(candidates, config.ppl);
+        var luckyGroup = _.sample(candidates, Ppls.const.DRAW_PPL_COUNT);
+        var luckyGuys = _.sample(luckyGroup, config.ppl);
+
         _.each(luckyGuys, function(luckyGuy) {
           if (config.scope == Configs.const.SCOPE_LOCAL) {
             luckyGuy.laId = config._id;
@@ -47,7 +49,7 @@ if (Meteor.isServer) {
         });
       }
 
-      return candidates;
+      return luckyGroup;
     }
   });
 }
