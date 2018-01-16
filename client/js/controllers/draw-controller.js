@@ -13,6 +13,9 @@ import * as TWEEN from 'tween.js/src/Tween';
 
 export default function($scope, $meteor, $reactive, $timeout, $interval) {
 
+  const cleanDuration = 500;
+  const cleanPositionZ = 3000;
+
   $reactive(this).attach($scope);
 
   var vm = this;
@@ -51,7 +54,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     home.className = 'home';
     var t1 = document.createElement( 'div' );
     t1.className = 't1';
-    t1.textContent = '2017西山居年夜饭';
+    t1.textContent = '2018西山居年夜饭';
     home.appendChild( t1 );
     var t2 = document.createElement( 'div' );
     t2.className = 't2';
@@ -71,9 +74,6 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.css3dHome.position.y = 0;
     vm.css3dHome.position.z = 1500;
 
-    var axis = new THREE.Vector3( 1, 0, 0 );
-    var angle = Math.PI / 2;
-
     vm.scene.add(vm.css3dHome);
 
     vm.render();
@@ -88,12 +88,11 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.cleanScreen().then(function() {
       return vm.initCandidates(rawDraw, rawCandidates);
     }).then(function() {
-      return vm.pullcloseCandidates(500);
-    }).then(function() {
       vm.wanderCandidates();
     });
     $('#bgm')[0].currentTime = 0;
     $('#bgm')[0].play();
+    $('#video-bg')[0].play();
   };
 
   vm.stopDraw = function(rawDraw) {
@@ -101,24 +100,25 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     vm.sortCandidates(rawDraw);
     vm.noticeResults(rawDraw);
     $('#bgm')[0].pause();
+    $('#video-bg')[0].pause();
     $timeout(function() {
       $('#done')[0].play();
     }, 100);
   };
 
   vm.noticeResults = function(rawDraw) {
-    var classes = ['三等奖', '二等奖', '一等奖', '特等奖', '神秘大奖'];
-    _.each(vm.candidates, function(candidate) {
-      if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
-        HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
-          userAccount: candidate.rawRtx,
-          userName: candidate.rawName,
-          roundName: rawDraw.class
-        }}, function(result) {
-          console.log(result);
-        });
-      }
-    });
+    // var classes = ['三等奖', '二等奖', '一等奖', '特等奖', '神秘大奖'];
+    // _.each(vm.candidates, function(candidate) {
+    //   if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
+    //     HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
+    //       userAccount: candidate.rawRtx,
+    //       userName: candidate.rawName,
+    //       roundName: rawDraw.class
+    //     }}, function(result) {
+    //       console.log(result);
+    //     });
+    //   }
+    // });
   }
 
   vm.cleanScreen = function() {
@@ -130,11 +130,11 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
       }
 
       if (vm.css3dHome) {
-        var positionX = -99999;
+        var positionX = vm.css3dHome.position.x;
         var positionY = vm.css3dHome.position.y;
-        var positionZ = vm.css3dHome.position.z;
+        var positionZ = cleanPositionZ;
         new TWEEN.Tween( vm.css3dHome.position )
-          .to( { x: positionX, y: positionY, z: positionZ }, 200 )
+          .to( { x: positionX, y: positionY, z: positionZ }, cleanDuration )
           .easing( TWEEN.Easing.Exponential.In )
           .onComplete(function() {
             vm.scene.remove(vm.css3dHome);
@@ -143,11 +143,11 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
       }
 
       if (vm.css3dTitle) {
-        var positionX = -99999;
+        var positionX = vm.css3dTitle.position.x;
         var positionY = vm.css3dTitle.position.y;
-        var positionZ = vm.css3dTitle.position.z;
+        var positionZ = cleanPositionZ;
         new TWEEN.Tween( vm.css3dTitle.position )
-          .to( { x: positionX, y: positionY, z: positionZ }, 200 )
+          .to( { x: positionX, y: positionY, z: positionZ }, cleanDuration )
           .easing( TWEEN.Easing.Exponential.In )
           .onComplete(function() {
             vm.scene.remove(vm.css3dTitle);
@@ -156,11 +156,11 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
       }
       if (!_.isEmpty(vm.candidates)) {
         _.each(vm.candidates, function(candidate) {
-          var positionX = -99999;
+          var positionX = candidate.position.x;
           var positionY = candidate.position.y;
-          var positionZ = candidate.position.z;
+          var positionZ = cleanPositionZ;
           new TWEEN.Tween( candidate.position )
-            .to( { x: positionX, y: positionY, z: positionZ }, 200 )
+            .to( { x: positionX, y: positionY, z: positionZ }, cleanDuration )
             .easing( TWEEN.Easing.Exponential.In )
             .onComplete(function() {
               _.each(vm.candidates, function(item) {
@@ -171,7 +171,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         });
       }
       new TWEEN.Tween( {} )
-        .to( {}, 200 )
+        .to( {}, cleanDuration )
         .onUpdate( vm.render )
         .start()
         .onComplete(function() {
@@ -211,9 +211,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         candidateEle.appendChild( loc );
 
         var css3dCandidate = new THREE.CSS3DObject( candidateEle );
-        css3dCandidate.position.x = ( ( i % 7 ) * 400 ) - 1200;
-        css3dCandidate.position.y = ( - ( Math.floor( i / 7 ) % 5 ) * 400 ) + 800;
-        css3dCandidate.position.z = ( - ( Math.floor(i / 35) * 500 ) ) + 8500;
+        vm.prepareCandidateWander(css3dCandidate);
         css3dCandidate.rawId = rawCandidate._id;
         css3dCandidate.rawRtx = rawCandidate.rtx;
         css3dCandidate.rawName = rawCandidate.name;
@@ -224,8 +222,6 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         vm.candidates.push(css3dCandidate);
       });
 
-      vm.initBoids(rawCandidates.length);
-
       vm.render();
 
       resolve();
@@ -233,51 +229,39 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
     return promise;
   };
 
-  vm.initBoids = function(count) {
-    vm.boids = [];
-    for (var i = 0; i < count; i++) {
-      boid = vm.boids[i] = new Boid(1, 50, 1, 20);
-      boid.position.x = ( ( i % 7 ) * 400 ) - 1200;
-      boid.position.y = ( - ( Math.floor( i / 7 ) % 5 ) * 400 ) + 800;
-      boid.position.z = ( - ( Math.floor(i / 35) * 500 ) ) + 500;
-      boid.velocity.x = Math.random() * 2 - 1;
-      boid.velocity.y = Math.random() * 2 - 1;
-      boid.velocity.z = Math.random() * 5 - 1;
-      boid.setAvoidWalls( true );
-      boid.setWorldSize( 2500, 1500, 2000 );
-    }
-  };
-
-  vm.pullcloseCandidates = function(duration) {
-    var promise = new Promise(function(resolve, reject) {
-      TWEEN.removeAll();
-      _.each(vm.candidates, function(candidate) {
-        new TWEEN.Tween( candidate.position )
-          .to( { x: candidate.position.x, y: candidate.position.y, z: candidate.position.z - 8000 }, Math.random() * duration + duration )
-          .easing( TWEEN.Easing.Linear.None )
-          .start();
-      });
-      new TWEEN.Tween( {} )
-        .to( {}, duration * 2 )
-        .onUpdate( vm.render )
-        .start()
-        .onComplete(function() {
-          $timeout(resolve, 50);
-      });
-    });
-
-    return promise;
+  vm.prepareCandidateWander = function(candidate) {
+    candidate.wander = {
+      current : 0,
+      times : Math.floor(Math.random() * 10) + 10,
+      startX : (Math.random() * 1000 - 500),
+      startY : (Math.random() * 1000 - 500),
+      startZ : - (Math.random() * 15000 + 20000),
+      endX : (Math.random() * 1000 - 500),
+      endY : (Math.random() * 1000 - 500),
+      endZ : Math.random() * 2000 + 2000
+    };
+    candidate.position.x = candidate.startX;
+    candidate.position.y = candidate.startY;
+    candidate.position.z = candidate.startZ;
+    vm.render();
+    return candidate.wander;
   };
 
   vm.wanderCandidates = function() {
     var moveStep = function(duration) {
       TWEEN.removeAll();
       _.each(vm.candidates, function(candidate, index) {
-        var boid = vm.boids[index];
-        boid.run(vm.boids);
+        if (candidate.wander.current >= candidate.wander.times) {
+          vm.prepareCandidateWander(candidate);
+        }
+        candidate.wander.current += 1;
+
+        var nextX = candidate.wander.startX + ((candidate.wander.endX - candidate.wander.startX) / candidate.wander.times * candidate.wander.current);
+        var nextY = candidate.wander.startY + ((candidate.wander.endY - candidate.wander.startY) / candidate.wander.times * candidate.wander.current);
+        var nextZ = candidate.wander.startZ + ((candidate.wander.endZ - candidate.wander.startZ) / candidate.wander.times * candidate.wander.current);
 
         new TWEEN.Tween( candidate.position )
-          .to( { x: boid.position.x, y: boid.position.y, z: boid.position.z }, duration )
+          .to( { x: nextX, y: nextY, z: nextZ }, duration )
           .easing( TWEEN.Easing.Linear.None )
           .start();
       });
@@ -287,7 +271,8 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         .start();
     }
 
-      var duration = 20;
+      var duration = 200;
+      moveStep(duration);
       vm.wanderInterval = $interval(function() {
         moveStep(duration);
       }, duration);
