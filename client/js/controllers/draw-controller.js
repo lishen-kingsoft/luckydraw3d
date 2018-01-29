@@ -190,7 +190,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         var candidateEle = document.createElement( 'div' );
         candidateEle.id = rawCandidate._id;
         candidateEle.className = 'candidate';
-        candidateEle.style.backgroundColor = 'rgba(10,174,235,' + ( Math.random() * 0.2 + 0.1 ) + ')';
+        candidateEle.style.backgroundColor = 'rgba(10,174,235,' + ( Math.random() * 0.2 + 0.2 ) + ')';
 
         var sn = document.createElement( 'div' );
         sn.className = 'sn';
@@ -321,7 +321,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         .to( { x: positionX, y: positionY, z: positionZ }, 500 )
         .easing( TWEEN.Easing.Linear.None )
         .start();
-      document.getElementById(candidate.rawId).style.backgroundColor = 'rgba(10,174,235,0.15)';
+      document.getElementById(candidate.rawId).style.backgroundColor = 'rgba(10,174,235,0.45)';
     });
     new TWEEN.Tween( {} )
       .to( {}, 500 )
