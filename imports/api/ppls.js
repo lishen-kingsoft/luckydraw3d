@@ -8,7 +8,7 @@ import { defaultPpls } from '/imports/mock/default-ppls';
 export const Ppls = new Mongo.Collection('ppls');
 
 Ppls.const = {
-  DRAW_PPL_COUNT: 350
+  DRAW_PPL_COUNT: 100
 };
 
 Meteor.methods({

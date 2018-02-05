@@ -13,5 +13,5 @@ export default angular.module('luckydraw3.routes', [])
       .state('draw', { url: '/', templateUrl: '/client/view/draw.ng.html', controller: 'DrawController as vm' });
 
     $stateProvider
-      .state('management', { url: '/management', templateUrl: '/client/view/management.ng.html', controller: 'ManagementController as vm' });
+      .state('management', { url: '/management/:type', templateUrl: '/client/view/management.ng.html', controller: 'ManagementController as vm' });
   });

@@ -7,11 +7,13 @@ import { Configs } from '/imports/api/configs';
 import { Ppls } from '/imports/api/ppls';
 import { Events } from '/imports/api/events';
 
-export default function($scope, $meteor, $reactive) {
+export default function($scope, $meteor, $reactive, $stateParams) {
 
   $reactive(this).attach($scope);
 
   var vm = this;
+
+  vm.pageType = $stateParams.type;
 
   vm.helpers({
     dbConfigs() {
@@ -174,7 +176,7 @@ export default function($scope, $meteor, $reactive) {
   };
 
   vm.init = function() {
-    vm.tab = 'config';
+    vm.tab = vm.pageType == 'oper' ? 'config' : 'list';
     vm.resetAddedConfig();
     $scope.$watch('vm.dbConfigs', function() {
       vm.enhanceDbConfigs();
