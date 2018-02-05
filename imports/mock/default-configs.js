@@ -126,7 +126,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖B',
+        'class': '二等奖A',
         'classSeq': 2,
         'round': '第一轮',
         'roundSeq': 1,
@@ -135,7 +135,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖B',
+        'class': '二等奖A',
         'classSeq': 2,
         'round': '第二轮',
         'roundSeq': 2,
@@ -144,7 +144,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖B',
+        'class': '二等奖A',
         'classSeq': 2,
         'round': '第三轮',
         'roundSeq': 3,
@@ -153,7 +153,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖B',
+        'class': '二等奖A',
         'classSeq': 2,
         'round': '第四轮',
         'roundSeq': 4,
@@ -162,7 +162,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖A',
+        'class': '二等奖B',
         'classSeq': 3,
         'round': '第一轮',
         'roundSeq': 1,
@@ -171,7 +171,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖A',
+        'class': '二等奖B',
         'classSeq': 3,
         'round': '第二轮',
         'roundSeq': 2,
@@ -180,7 +180,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖A',
+        'class': '二等奖B',
         'classSeq': 3,
         'round': '第三轮',
         'roundSeq': 3,
@@ -189,7 +189,7 @@ export const defaultConfigs = [
         'scope': '小西山居'
     },
     {
-        'class': '二等奖A',
+        'class': '二等奖B',
         'classSeq': 3,
         'round': '第四轮',
         'roundSeq': 4,
@@ -247,7 +247,7 @@ export const defaultConfigs = [
         'classSeq': 4,
         'round': '第六轮',
         'roundSeq': 6,
-        'ppl': 20,
+        'ppl': 13,
         'status': '未开始',
         'scope': '小西山居'
     },
