@@ -24,3 +24,5 @@ ejson
 mikowals:batch-insert
 matb33:bootstrap-print
 http
+jparker:crypto-sha256
+jparker:crypto-hmac

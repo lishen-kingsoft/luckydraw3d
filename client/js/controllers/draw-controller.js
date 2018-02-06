@@ -107,18 +107,26 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
   };
 
   vm.noticeResults = function(rawDraw) {
-    // var classes = ['三等奖', '二等奖', '一等奖', '特等奖', '神秘大奖'];
-    // _.each(vm.candidates, function(candidate) {
-    //   if(candidate.rawRtx && candidate.rawName && classes.indexOf(rawDraw.class) > -1) {
-    //     HTTP.call('POST', 'http://it.xishanju.com:8081/apis/annualparty/sendLuckyDrawResult', {data: {
-    //       userAccount: candidate.rawRtx,
-    //       userName: candidate.rawName,
-    //       roundName: rawDraw.class
-    //     }}, function(result) {
-    //       console.log(result);
-    //     });
-    //   }
-    // });
+    _.each(vm.candidates, function(candidate) {
+      if(candidate.rawSn && candidate.rawName) {
+        var postTs = Date.now();
+        var postData = {
+          employeeNo: candidate.rawSn,
+          userName: candidate.rawName,
+          awardName: rawDraw.class
+        };
+        var postParams = {
+          ts: postTs,
+          sign: CryptoJS.HmacSHA256(postData.employeeNo+'-'+postData.userName+'-'+postData.awardName+'-'+postTs, 'seasun-ap-2018').toString()
+        }
+        HTTP.call('POST', 'http://doc.xgsdk.com:34444/pub/ap/draw', {
+          data: postData,
+          params: postParams
+        }, function(result) {
+          console.log(result);
+        });
+      }
+    });
   }
 
   vm.cleanScreen = function() {
@@ -213,7 +221,7 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
         var css3dCandidate = new THREE.CSS3DObject( candidateEle );
         vm.prepareCandidateWander(css3dCandidate);
         css3dCandidate.rawId = rawCandidate._id;
-        css3dCandidate.rawRtx = rawCandidate.rtx;
+        css3dCandidate.rawSn = rawCandidate.sn;
         css3dCandidate.rawName = rawCandidate.name;
         css3dCandidate.lucky = (rawCandidate.laId == rawDraw._id || rawCandidate.gaId == rawDraw._id);
 
@@ -240,9 +248,9 @@ export default function($scope, $meteor, $reactive, $timeout, $interval) {
       endY : (Math.random() * 1000 - 500),
       endZ : Math.random() * 2000 + 2000
     };
-    candidate.position.x = candidate.startX;
-    candidate.position.y = candidate.startY;
-    candidate.position.z = candidate.startZ;
+    candidate.position.x = candidate.wander.startX;
+    candidate.position.y = candidate.wander.startY;
+    candidate.position.z = candidate.wander.startZ;
     vm.render();
     return candidate.wander;
   };
